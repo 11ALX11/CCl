@@ -5,6 +5,8 @@
 #include <cstdio>
 #include <cstring>
 
+#include <fcntl.h>
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <stdio.h>
@@ -14,6 +16,7 @@
 #include <stdlib.h>
 
 int sockfd;
+char ip[255];
 
 int client_start() {
 
@@ -55,7 +58,7 @@ void setup_client_socket() {
 //3. Назовите сокет по согласованию с сервером:
 
     address.sin_family = AF_INET;
-    address.sin_addr.s_addr = inet_addr("127.0.0.1");
+    address.sin_addr.s_addr = inet_addr(get_ip());
     address.sin_port = htons(9734);
     len = sizeof(address);
 
@@ -77,4 +80,18 @@ void send_requests(char *send_str, int nbytes) {
     while (read(sockfd, &ch, 1)) {
         printf("%c", ch);
     }
+}
+
+char *get_ip() {
+    int fd;
+    if((fd = open("ip.txt", O_RDONLY | O_CREAT, 0666)) < 0){
+        printf("Can\'t open file\n");
+        exit(-1);
+    }
+
+    read(fd, &ip, 255);
+
+    close(fd);
+
+    return ip;
 }
