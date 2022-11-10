@@ -89,7 +89,9 @@ char *get_ip() {
         exit(-1);
     }
 
-    read(fd, &ip, 255);
+    int nbytes = read(fd, &ip, 255);
+
+    ip[nbytes-1] = '\0';
 
     close(fd);
 
